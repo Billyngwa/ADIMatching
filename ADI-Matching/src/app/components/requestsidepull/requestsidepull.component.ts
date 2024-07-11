@@ -84,7 +84,7 @@ export class RequestsidepullComponent implements OnInit {
     })
 
     if(querySnapshot.length === 0){
-      addDoc(this.subcoll,this.localstore.get('User').data);
+      addDoc(this.subcoll,{profile:this.localstore.get('User').data});
     }
     else{
       console.log(`from request side pull component:: profile exist `);

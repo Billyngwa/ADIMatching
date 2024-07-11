@@ -7,13 +7,13 @@
             </div>
             <mat-form-field>
                 <label for="URL">URL</label>
-                <input type="text" mat-input id="URL">
+                <input type="text" name="webUrl"  [(ngModel)]="website.webUrl" mat-input id="URL" name="webUrl" [(ngModel)] ="website.webUrl">
             </mat-form-field>
             <mat-form-field>
                 <label for="Description">Site Description</label>
-                <textarea name="site description" id="Description" ></textarea>
+                <textarea name="siteDescription" [(ngModel)]="website.siteDescription" id="Description"  [(ngModel)] ="website.siteDescription" ></textarea>
             </mat-form-field>
-            <button (click)="add($event)"><mat-icon>add</mat-icon></button>
+            <button (click)="add($event,website)"><mat-icon>add</mat-icon></button>
         </mat-card>
     </form>
 </section>

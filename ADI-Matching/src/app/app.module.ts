@@ -33,7 +33,7 @@ import { MatchService } from './services/match.service';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ContactComponent } from './components/contact/contact.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ConnectionServiceModule } from 'ng-connection-service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { KagertingComponent } from './components/kagerting/kagerting.component';
@@ -50,6 +50,9 @@ import { ServicesComponent } from './components/profileeditors/services/services
 import { RelatedskillsComponent } from './components/profileeditors/relatedskills/relatedskills.component';
 import { EducationinfoComponent } from './components/profileeditors/educationinfo/educationinfo.component';
 import { ContactinfoComponent } from './components/profileeditors/contactinfo/contactinfo.component';
+import { LoaderComponent } from './components/loader/loader.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
+import { LoaderInterceptor } from 'src/interceptors/loader.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -76,7 +79,8 @@ import { ContactinfoComponent } from './components/profileeditors/contactinfo/co
     ServicesComponent,
     RelatedskillsComponent,
     EducationinfoComponent,
-    ContactinfoComponent
+    ContactinfoComponent,
+    LoaderComponent
   ],
   imports: [
     FormsModule,
@@ -104,9 +108,16 @@ import { ContactinfoComponent } from './components/profileeditors/contactinfo/co
     MatInputModule,
     FormsModule,
     MatRadioModule,
-    NgxPayPalModule
+    NgxPayPalModule,
+    MatProgressSpinnerModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoaderInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent],
   entryComponents:[WebsiteComponent,ServicesComponent,ContactComponent]
 })

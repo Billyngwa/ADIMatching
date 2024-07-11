@@ -25,7 +25,7 @@ import { RelatedskillsComponent } from './components/profileeditors/relatedskill
 
 const routes: Routes = [
   { path: "", component: MainComponent },
-  { path: "sign-up", component: SignupComponent },
+  { path: "sign-up", component: SignupComponent, title:"Register" },
   { path: "sign-in", component: SigninComponent },
   {
     path: "uoai",

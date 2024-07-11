@@ -3,13 +3,13 @@
         <mat-card>
             <div class="mat-header-cross">
                 <mat-card-header>Add Skills</mat-card-header>
-                <button color="disabled" (click)="cancel($event)"><mat-icon aria-hidden="false">cancel</mat-icon></button>
+                <button color="disabled" (click)="cancel($event,skill)"><mat-icon aria-hidden="false">cancel</mat-icon></button>
             </div>
             <mat-form-field>
                 <label for="Service">Skill</label>
-                <input type="text" mat-input id="Service">
+                <input type="text" name="skillName" [(ngModel)] = "skill.skillName"  mat-input id="Service">
             </mat-form-field>
-            <button (click)="add($event)"><mat-icon>add</mat-icon></button>
+            <button (click)="add($event,skill)"><mat-icon>add</mat-icon></button>
         </mat-card>
     </form>
 </section>

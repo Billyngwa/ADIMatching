@@ -36,12 +36,13 @@ export class KagertingComponent {
     const dialogConfig = new MatDialogConfig();
 
     dialogConfig.disableClose = true;
-    dialogConfig.width = '60%'
-    dialogConfig.height = '70vh'
+    dialogConfig.width = '60%';
+    dialogConfig.height = '70vh';
     const dialogRef = this.dialog.open(NewsComponent, dialogConfig);
     dialogRef.afterClosed().subscribe((news_result: any) => {
-      console.log(`Dialog news_result:`, news_result);
       this.latestNews = news_result
+      console.log(`Dialog news_result:`, news_result);
+
     });
   }
 

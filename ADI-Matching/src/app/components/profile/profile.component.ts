@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Firestore, collection, doc, getDocs, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDoc, getDocs, query, where } from '@angular/fire/firestore';
 import { MatFabButton } from '@angular/material/button';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -16,25 +16,68 @@ import { WebsiteComponent } from '../profileeditors/website/website.component';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-   userinfoFromfirestore:any = [] ;
-   logins:any
-  //  scr =  
-   constructor(
+  userinfoFromfirestore: any = [];
+  logins: any
+
+  matdialogVal: any = {
+    education: {
+      school: '',
+      program: '',
+      startDate: '',
+      endDate: '',
+      degree: ''
+    },
+    skill: {
+      skillName: ''
+    },
+    services: {
+      serviceName: ''
+    },
+    website: {
+      webUrl: '',
+      siteDescription: ''
+    }
+  };
+
+profile:Array<object> = []; 
+  constructor(
     private fire: Firestore,
     private localstore: LocalstoreService,
-    private matchservice:MatchService,
-    private route:Router,
-    private dialog:MatDialog
+    private matchservice: MatchService,
+    private route: Router,
+    private dialog: MatDialog
   ) {
 
-    matchservice.emmitLogins.subscribe((login=>{
+    matchservice.emmitLogins.subscribe((login => {
       this.logins = login;
-      
-  }))
-     
+
+    }))
+
+
+    
+      // const queryEmail = await getDocs(query(this.dbRef, where('email', '==', this.email['id'])))
+
+      // queryEmail.docs.forEach(doci =>{
+      //   console.log(doci.data());
+        
+      // })
+
   }
 
   ngOnInit(): void {
+    (async ()=>{
+      const queryEmail = await getDoc(doc(this.dbref,this.email));
+
+      if(queryEmail.exists()){
+        console.log(queryEmail.data());
+        
+      }
+      else{
+        console.log('No such Document');
+        
+      }
+
+    })()
 
   }
   //Initialisation of firestore variables 
@@ -43,65 +86,92 @@ export class ProfileComponent implements OnInit {
   userSubcol = collection(this.docRef, "profile")
   requestCollection = collection(this.fire, 'Match_Request');
   dbref = collection(this.fire, 'ConfirmedUsers');
+  email = this.localstore.get('User').data['email' as keyof object];
 
   infoFromLocalStorage = this.localstore.get('User').data;
 
-  showContactInfo(e:any){
-    console.log('you clicked this button');
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.disableClose = true;
-    dialogConfig.autoFocus = true;
-    dialogConfig.width = '80%';
-    dialogConfig.maxHeight= '80vh'
-    this.dialog.open(ContactinfoComponent,dialogConfig)
+  async getProfile(){
+    
+      const queryEmail = await getDoc(doc(this.dbref,this.email))
+
+      
   }
-  showEducationInfo(e:any){
+
+  showContactInfo(e: any) {
     console.log('you clicked this button');
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '80%';
-    dialogConfig.maxHeight= '80vh'
-    this.dialog.open(EducationinfoComponent,dialogConfig)
+    dialogConfig.maxHeight = '80vh'
+    const dialogRef = this.dialog.open(ContactinfoComponent, dialogConfig);
+    // dialogRef.afterClosed().subscribe((result:any) =>{
+    //   this.matdialogVal = result;
+    // })
   }
-  showRelatedSkills(e:any){
+  showEducationInfo(e: any) {
     console.log('you clicked this button');
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '80%';
-    dialogConfig.maxHeight= '80vh'
-    this.dialog.open(RelatedskillsComponent,dialogConfig)
+    dialogConfig.maxHeight = '80vh'
+    const dialogRef = this.dialog.open(EducationinfoComponent, dialogConfig)
+    dialogRef.afterClosed().subscribe((result: object) => {
+      this.matdialogVal['education' as keyof object] = result;
+      console.log('from matdialog', this.matdialogVal);
+
+    })
   }
-  showServices(e:any){
+  showRelatedSkills(e: any) {
     console.log('you clicked this button');
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '80%';
-    dialogConfig.maxHeight= '80vh'
-    dialogConfig.data ={
-      title:'Add Services'
+    dialogConfig.maxHeight = '80vh'
+    const dialogRef = this.dialog.open(RelatedskillsComponent, dialogConfig)
+    dialogRef.afterClosed().subscribe((result: object) => {
+      this.matdialogVal = result;
+      console.log('from matdialog', this.matdialogVal);
+
+    })
+  }
+  showServices(e: any) {
+    console.log('you clicked this button');
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '80%';
+    dialogConfig.maxHeight = '80vh'
+    dialogConfig.data = {
+      title: 'Add Services'
     }
 
-    this.dialog.open(ServicesComponent,dialogConfig)
+    const dialogRef = this.dialog.open(ServicesComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((result: any) => {
+      this.matdialogVal['services' as keyof object] = result;
+    })
   }
-  showWebsite(e:any){
+  showWebsite(e: any) {
     console.log('you clicked this button');
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '80%';
-    dialogConfig.maxHeight= '80vh'
-    this.dialog.open(WebsiteComponent,dialogConfig)
+    dialogConfig.maxHeight = '80vh'
+    const dialogRef = this.dialog.open(WebsiteComponent, dialogConfig);
+    // dialogRef.afterClosed().subscribe((result:any) =>{
+    //   this.matdialogVal = result;
+    // })
   }
-  showHighlights(e:any){
+  showHighlights(e: any) {
     console.log('you clicked this button');
     const dialogConfig = new MatDialogConfig();
     dialogConfig.disableClose = true;
     dialogConfig.autoFocus = true;
     dialogConfig.width = '80%';
-    dialogConfig.maxHeight= '80vh'
+    dialogConfig.maxHeight = '80vh'
     // this.dialog.open(,dialogConfig)
   }
 }

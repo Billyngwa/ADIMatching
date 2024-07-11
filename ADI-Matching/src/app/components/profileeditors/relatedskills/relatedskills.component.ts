@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
+import { Firestore, addDoc, collection, doc } from '@angular/fire/firestore';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Skill } from 'src/app/interfaces/skill';
+import { LocalstoreService } from 'src/app/services/localstore.service';
 
 @Component({
   selector: 'app-relatedskills',
@@ -7,13 +10,28 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./relatedskills.component.scss']
 })
 export class RelatedskillsComponent {
+  skill:Skill = {
+    skillName:''
+  }
   constructor(
-    private dialogRef : MatDialogRef<RelatedskillsComponent>
+    private dialogRef : MatDialogRef<RelatedskillsComponent>,
+    private fire : Firestore,
+    private localstore : LocalstoreService
   ){}
-  add(e:any){
+
+  dbRef = collection(this.fire, "ConfirmedUsers");
+  docref = doc(this.dbRef, this.localstore.get("User").data['email']);
+  subcol = collection(this.docref, 'MyConnections');
+  subcoll = collection(this.docref, 'Profile');
+  profileDocref = doc(this.subcoll,'skill');
+  profileSubCol = collection(this.profileDocref,'skills');
+
+  add(e:any,skill:Skill){
+    console.log(skill);
+    // addDoc(this.profileSubCol,skill)
 
   }
-  cancel(e:any){
-    this.dialogRef.close();
+  cancel(e:any,skill:Skill){
+    this.dialogRef.close(skill);
   }
 }

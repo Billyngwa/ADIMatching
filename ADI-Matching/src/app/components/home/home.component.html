@@ -25,13 +25,13 @@
     </div>
     <div class="welcome-message">
         <div class="welcome-account-setup">
-            <div class="name-descrip" *ngIf="logins">
-                <h1 class="text-head">Welcome {{logins.Name}}</h1>
-                <h2 class="descrip">
+            <div class="name-descrip" *ngIf="logins && welcomeCount.profile == true ">
+                <h1 class="text-head" *ngIf="welcomeCount.profile !== true ">Welcome {{logins.Name}}</h1>
+                <h2 class="descrip" *ngIf="welcomeCount.profile !== true ">
                     Complete your information to increase chances of matching with the right person
                 </h2>
             </div>
-            <div class="account-setup">
+            <div class="account-setup" *ngIf="welcomeCount.profile == true" >
                 <button type="button" (click)="setupAccount($event)"><span>Setup Account</span> <i class="fa-solid fa-greater-than"></i></button>
             </div>
         </div>

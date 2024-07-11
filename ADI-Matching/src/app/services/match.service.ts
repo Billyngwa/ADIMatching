@@ -11,11 +11,17 @@ export class MatchService {
   emmitLogins = new BehaviorSubject<object>({});
   emmitMR = new BehaviorSubject<any>([]);
   emmitConnections = new BehaviorSubject<object>({})
+  emmitWelcomeCount = new BehaviorSubject<object>({})
 
   takeLogins = this.emmitLogins.asObservable(); 
   took = this.emmitMatches.asObservable();
   MR = this.emmitMR.asObservable();
-  boom =this.emmitConnections.asObservable()
+  boom =this.emmitConnections.asObservable();
+  welcomeCount = this.emmitWelcomeCount.asObservable();
+
+public getWelcomeCount(count:object){
+  this.emmitWelcomeCount.next(count);
+}
 
     // this function emmits all users from the Users collection 
   public getMatches(match: object) {

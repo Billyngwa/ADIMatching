@@ -70,6 +70,7 @@
 				<mat-card-content>
 					<div class="complete-profile-div">
 						Your Academics falls here.
+						<p>{{matdialogVal.education.school}}</p>
 					</div>
 				</mat-card-content>
 			</mat-card>
@@ -78,8 +79,8 @@
 					<h3>Related Skills</h3>
 					<div class="add-and-edit">
 						<div class="add">
-							<button class="red" color="red" mat-mini-fab matTooltip="Add Business Info" (click)="showRelatedSkills($event)"
-							><mat-icon>add</mat-icon></button>
+							<button class="red" color="red" mat-mini-fab matTooltip="Add Business Info"
+								(click)="showRelatedSkills($event)"><mat-icon>add</mat-icon></button>
 						</div>
 						<div class="edit">
 							<button class="red" color="red" mat-mini-fab
@@ -90,6 +91,7 @@
 				<mat-card-content>
 					<div class="complete-profile-div">
 						Your Related skills falls here.
+						<p>{{matdialogVal.skill.skillName}}</p>
 					</div>
 				</mat-card-content>
 			</mat-card>
@@ -130,7 +132,8 @@
 					<h3>Services</h3>
 					<div class="add-and-edit">
 						<div class="add">
-							<button class="red" color="red" mat-mini-fab matTooltip="Add Business Info" (click)="showServices($event)"	><mat-icon>add</mat-icon></button>
+							<button class="red" color="red" mat-mini-fab matTooltip="Add Business Info"
+								(click)="showServices($event)"><mat-icon>add</mat-icon></button>
 						</div>
 						<div class="edit">
 							<button class="red" color="red" mat-mini-fab
@@ -141,6 +144,7 @@
 				<mat-card-content>
 					<div class="complete-profile-div">
 						Your Business Services falls here.
+						<p>{{matdialogVal.services.serviceName}}</p>
 					</div>
 				</mat-card-content>
 			</mat-card>

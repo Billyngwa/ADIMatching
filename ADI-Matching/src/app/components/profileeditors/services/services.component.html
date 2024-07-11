@@ -3,13 +3,13 @@
         <mat-card>
             <div class="mat-header-cross">
                 <mat-card-header>Add Service</mat-card-header>
-                <button color="disabled" (click)="cancel($event)"><mat-icon aria-hidden="false">cancel</mat-icon></button>
+                <button color="disabled" (click)="cancel($event,service)"><mat-icon aria-hidden="false">cancel</mat-icon></button>
             </div>
             <mat-form-field>
                 <label for="Service">Service</label>
-                <input type="text" mat-input id="Service">
+                <input type="text" name="serviceName" [(ngModel)]="service.serviceName" mat-input id="Service">
             </mat-form-field>
-            <button (click)="add($event)"><mat-icon>add</mat-icon></button>
+            <button (click)="add($event,service)"><mat-icon>add</mat-icon></button>
         </mat-card>
     </form>
 </section>

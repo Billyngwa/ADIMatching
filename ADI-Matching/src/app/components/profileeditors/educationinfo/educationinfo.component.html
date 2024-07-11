@@ -3,33 +3,35 @@
         <mat-card>
             <div class="mat-header-cross">
                 <mat-card-header>Education</mat-card-header>
-                <button color="disabled" (click)="cancel($event)"><mat-icon aria-hidden="true">cancel</mat-icon></button>
+                <button color="disabled" (click)="cancel($event,education)"><mat-icon aria-hidden="true">cancel</mat-icon></button>
             </div>
             <mat-form-field>
                 <label for="school">Name of School</label>
-                <input type="text" mat-input id="school">
+                <input type="text" name="school" [(ngModel)] = "education.school" matInput id="school">
             </mat-form-field>
             <mat-form-field>
                 <label for="program">Name of Program</label>
-                <input type="text" name="site description" id="program" />
+                <input type="text" name="program" [(ngModel)] = "education.program" id="program" />
             </mat-form-field>
             <mat-form-field>
                 <label for="degree">Degree Obtained</label>
-                <input type="text" name="site description" id="degree" />
+                <input type="text" matInput name="degree" [(ngModel)] = "education.degree" id="degree" />
             </mat-form-field>
             <div class="input-holder">
                 <label for="start-date">Start date</label>
     
-                <input type="date" name="startDate"  class="form-control"
+                <input type="date" matInput name="startDate" [(ngModel)] = "education.startDate"  class="form-control"
                     placeholder="Task start date">
             </div>
             <div class="input-holder">
                 <label for="start-date">End date</label>
     
-                <input type="date"  name="dueDate" class="form-control"
+                <input type="date" matInput  name="endDate" [(ngModel)] = "education.endDate" class="form-control"
                     placeholder="Task due date">
             </div>
-            <button (click)="add($event)"><mat-icon>add</mat-icon></button>
+
+            <div class="spinner-overlay" *ngIf="loader">Loader</div>
+            <button (click)="add($event,education)"><mat-icon>add</mat-icon></button>
         </mat-card>
     </form>
 </section>

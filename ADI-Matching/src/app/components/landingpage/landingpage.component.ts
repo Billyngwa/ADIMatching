@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Firestore, collection, doc, getDocs, query, where } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, doc, getDocs, query, where } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { LocalstoreService } from 'src/app/services/localstore.service';
 import { MatchService } from 'src/app/services/match.service';
@@ -12,7 +12,7 @@ import { MatchService } from 'src/app/services/match.service';
 export class LandingpageComponent implements OnInit {
   requests: boolean = true;
   users!: any
-
+welcomeMessage!:object;
 
   loginCredits!: object;
   getcrumb!: string
@@ -27,13 +27,46 @@ export class LandingpageComponent implements OnInit {
     return this.getcrumb;
   };
 
+
+  dbRef = collection(this.fire, "ConfirmedUsers");
+  docref = doc(this.dbRef, this.localstore.get("User").data['email'])
+  subcol = collection(this.docref, 'MyConnections');
+  subcoll = collection(this.docref, 'Profile');
+  subcolwelcomeMessage = collection(this.docref, 'welcome');
   constructor(
     private localstore: LocalstoreService,
     private matchservice: MatchService,
     private fire: Firestore,
-    private route:Router
+    private route: Router
 
   ) {
+    
+    (async () => {
+      const profileQuery = await getDocs(query(this.subcoll));
+      const welcomeQuery = await getDocs(query(this.subcolwelcomeMessage));
+
+      const querySnapshot = profileQuery.docs.map(doc => {
+        
+        return doc.data()
+
+      })
+      const welcomeSnapshot = welcomeQuery.docs.map(doc => {
+        
+        return doc.data()
+
+      })
+      if (welcomeSnapshot.length === 0) {
+        addDoc(this.subcolwelcomeMessage,{val:true})
+        this.welcomeMessage = {
+          profile:false,
+          noProfile:true
+        }
+        matchservice.getWelcomeCount(this.welcomeMessage)
+      }
+    })()
+
+    
+
 
     matchservice.emmitLogins.subscribe(data => {
       this.loginCredits = data;
@@ -57,6 +90,14 @@ export class LandingpageComponent implements OnInit {
 
       })
 
+    // trying to get profile from firebase
+    //here  i get it so i can detect if it is the users first time accessing the app.
+
+    // asyncFunction()
+
+
+
+
 
   }
 
@@ -69,12 +110,17 @@ export class LandingpageComponent implements OnInit {
 
 
   ngOnInit(): void {
-    
+
+
+
     // this.allRequesters = this.getRequester();
     window.addEventListener('online', () => window.location.reload()
     );
     (async () => {
       const finalResult = await this.getFirestoreObjects(this.dbrefUsers);
+
+   
+
       this.matchservice.getMatches(finalResult.map(data => { return { data: data.data(), id: data.id } }));
 
     })()
@@ -86,8 +132,8 @@ export class LandingpageComponent implements OnInit {
       (async () => {
         const request = await this.getFirestoreMatchRequest(this.requestCollection);
         this.matchservice.getMR(request.map(data => {
-          console.log('we good ',data.data());
-          
+          console.log('we good ', data.data());
+
           return { data: data.data() }
         }))
       })()
@@ -150,16 +196,17 @@ export class LandingpageComponent implements OnInit {
           })
 
           this.matchservice.getConnections(this.usermatch)
+          //move to the matches component and subscribe to get all your matches
 
         })
 
-      }).catch(error=>{
+      }).catch(error => {
         console.log(error);
-        
+
       })
-      
+
   }
-  gettherequests(e:any){
+  gettherequests(e: any) {
     this.requests = e;
     this.route.navigate(['/uoai/matchrequests']);
   }

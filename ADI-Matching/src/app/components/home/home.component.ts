@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Firestore, addDoc, collection, getDocs } from '@angular/fire/firestore';
+import { Firestore, addDoc, collection, doc, getDocs, query } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { LocalstoreService } from 'src/app/services/localstore.service';
 import { MatchService } from 'src/app/services/match.service';
@@ -13,52 +13,90 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  matches:Array<any> = [] //this is a class property
+  matches: Array<any> = [] //this is a class property
   // The constructor is the first function to be run before the class
-  logins:any = {};
+  logins: any = {};
+  welcomeCount: any = {
+    profile:false
+  };
   constructor(
-    public matchservice:MatchService,
+    public matchservice: MatchService,
     private localstore: LocalstoreService,
-    private fire:Firestore,
+    private fire: Firestore,
     public dialog: MatDialog,
-    private router:Router
-    
-  ){
-    matchservice.emmitMatches.subscribe((data:any)=>{
+    private router: Router
+
+  ) {
+    //subscribing to the welcomecount
+
+    matchservice.emmitWelcomeCount.subscribe((data: object) => {
+      this.welcomeCount = data
+      console.log('welcome count: ', this.welcomeCount);
+
+    })
+
+    matchservice.emmitMatches.subscribe((data: any) => {
       this.matches = data;
       // so this approach is wise because it will create matches even before 
       //the class is runned. when the class finally runs, it will use the matches which was already created
-     
+
     })
-    matchservice.emmitLogins.subscribe((login=>{
-        this.logins = login;
+    matchservice.emmitLogins.subscribe((login => {
+      this.logins = login;
     }))
   }
   UserId = this.localstore.get('UserId').data
 
-  dbref = collection(this.fire,'Match_Request');
+  dbref = collection(this.fire, 'Match_Request');
+
+  dbRef = collection(this.fire, "ConfirmedUsers");
+  docref = doc(this.dbRef, this.localstore.get("User").data['email'])
+  subcol = collection(this.docref, 'MyConnections');
+  subcoll = collection(this.docref, 'Profile');
+  subcolwelcomeMessage = collection(this.docref, 'welcome');
 
   ngOnInit(): void {
-    
+    (async () => {
+      //seraching for the welcome message from firestore
+      const welcomeQuery = await getDocs(query(this.subcolwelcomeMessage));
+      const welcomeSnapshot = welcomeQuery.docs.map(doc => {
+        console.log('Hello there', doc.data(), 'hello end');
+
+        return doc.data()
+
+      })
+      if (welcomeSnapshot.length != 0) {
+        console.log('welcome dey');
+        // addDoc(this.subcolwelcomeMessage,{val:true})
+        this.welcomeCount = {
+          profile: true,
+          noProfile: false
+        }
+        return this.welcomeCount
+        // this.matchservice.getWelcomeCount(this.welcomeMessage)
+      }
+    })()
+
+
   }
 
-  openDialog(){
+  openDialog() {
     const dialogRef = this.dialog.open(CardComponent);
-    dialogRef.afterClosed().subscribe(result => { 
-        console.log(`Dialog result: ${result}`);
-     });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
-  openFilter(){
+  openFilter() {
     const dialogRef = this.dialog.open(FilterComponent);
     dialogRef.afterClosed().subscribe((result2: any) => {
       console.log(`Dialog result2: ${result2} `);
-   });
-  
-   }
+    });
 
-  async makeMatch(e:any,object:object,disableButton:HTMLButtonElement){
-    console.log(`this is object`,object);//In order to make a match request, we need to use the id
+  }
+
+  async makeMatch(e: any, object: object, disableButton: HTMLButtonElement) {
+    console.log(`this is object`, object);//In order to make a match request, we need to use the id
     // of the person we wish to match with and the id of the matcher as well. we store these two 
     // ids in an object as such {recipientId:'idValue', senderId:'idValue'}
     //{recipientId:'idValue', senderId:'idValue'} is the object we store as documents in the Match_Request collection
@@ -71,39 +109,41 @@ export class HomeComponent implements OnInit {
     // first let us create the requestObject and save it to firestore.
 
     let requestObject = {
-      recipientId:object['id' as keyof object], //document Id of the user who recieves the match request provided by Firebase
-      senderId:this.UserId.id, //Id of user making a match request. This Id is the email of the user.
+      recipientId: object['id' as keyof object], //document Id of the user who recieves the match request provided by Firebase
+      senderId: this.UserId.id, //Id of user making a match request. This Id is the email of the user.
     }
-   await addDoc(this.dbref,requestObject);
-    
+    await addDoc(this.dbref, requestObject);
+
+    disableButton.setAttribute('class','disable');
+
   }
 
   imageObject = [{
     image: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/5.jpg',
     thumbImage: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/5.jpg',
     title: 'Hummingbirds are amazing creatures'
-}, {
+  }, {
     image: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/9.jpg',
     thumbImage: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/9.jpg'
-}, {
+  }, {
     image: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/4.jpg',
     thumbImage: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/4.jpg',
     title: 'Example with title.'
-},{
+  }, {
     image: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/7.jpg',
     thumbImage: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/7.jpg',
     title: 'Hummingbirds are amazing creatures'
-}, {
+  }, {
     image: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/1.jpg',
     thumbImage: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/1.jpg'
-}, {
+  }, {
     image: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/2.jpg',
     thumbImage: 'https://sanjayv.github.io/ng-image-slider/contents/assets/img/slider/2.jpg',
     title: 'Example two with title.'
-}];
-   //code for user to setup account
-   setupAccount(e:any){
+  }];
+  //code for user to setup account
+  setupAccount(e: any) {
     this.router.navigate(['/uoai/profile']);
-    
+
   }
 }
